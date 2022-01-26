@@ -1,10 +1,10 @@
 package com.fdantas.minhasFinancas.exception;
 
-public class ErroAutenticacao extends RuntimeException {
+public class ErroAutenticacaoException extends RuntimeException {
 	
 	private static final long serialVersionUID = -4746406264114135500L;
 
-	public ErroAutenticacao(String mensagem) {
+	public ErroAutenticacaoException(String mensagem) {
 		super(mensagem);
 	}
 

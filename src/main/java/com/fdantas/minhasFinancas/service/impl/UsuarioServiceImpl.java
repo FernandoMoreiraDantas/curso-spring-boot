@@ -7,7 +7,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fdantas.minhasFinancas.exception.ErroAutenticacao;
+import com.fdantas.minhasFinancas.exception.ErroAutenticacaoException;
 import com.fdantas.minhasFinancas.exception.RegraNegocioException;
 import com.fdantas.minhasFinancas.model.entity.Usuario;
 import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
@@ -19,16 +19,24 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
+	
+	
+	
+	public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
+		super();
+		this.usuarioRepository = usuarioRepository;
+	} 
+
 	@Override
 	public Usuario autenticar(String email, String senha) {
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
 		
 		if(usuario.isEmpty()) {
-			throw new ErroAutenticacao("Usuário não encontrado para o e-mail informado.");
+			throw new ErroAutenticacaoException("Usuário não encontrado para o e-mail informado.");
 		}
 		
 		if(!usuario.get().getSenha().equals(senha)) {
-			throw new ErroAutenticacao("Senha Inválida.");
+			throw new ErroAutenticacaoException("Senha Inválida.");
 		}
 		
 		return usuario.get();
