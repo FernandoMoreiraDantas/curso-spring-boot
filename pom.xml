@@ -13,6 +13,7 @@
 	<name>minhasFinancas</name>
 	<description>Projeto para controle de finanças</description>
 	<properties>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 	</properties>
 	<dependencies>

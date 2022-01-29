@@ -12,6 +12,7 @@ import com.fdantas.minhasFinancas.exception.RegraNegocioException;
 import com.fdantas.minhasFinancas.model.entity.Usuario;
 import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
 import com.fdantas.minhasFinancas.service.UsuarioService;
+import com.fdantas.minhasFinancas.util.Mensagem;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
@@ -19,6 +20,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
+	@Autowired
+	private Mensagem mensagem;
 	
 	
 	
@@ -32,11 +35,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 		Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
 		
 		if(usuario.isEmpty()) {
-			throw new ErroAutenticacaoException("Usuário não encontrado para o e-mail informado.");
+			throw new ErroAutenticacaoException(mensagem.getMensagem("usuario.nao-encontrado"));
 		}
 		
 		if(!usuario.get().getSenha().equals(senha)) {
-			throw new ErroAutenticacaoException("Senha Inválida.");
+			throw new ErroAutenticacaoException(mensagem.getMensagem("usuario.senha-invalida"));
 		}
 		
 		return usuario.get();
@@ -52,7 +55,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Override
 	public void validarEmail(String email) {
 		if(usuarioRepository.existsByEmail(email)){
-			throw new RegraNegocioException("E-mail já cadastrado.");
+			throw new RegraNegocioException(mensagem.getMensagem("usuario.email-ja-cadastrado"));
 		}
 		
 	}
