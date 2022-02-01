@@ -14,4 +14,8 @@ public class Mensagem {
 	public String  getMensagem(String mensagen) {
 		return messageSource.getMessage(mensagen,null,LocaleContextHolder.getLocale());
 	}
+	
+	public String  getMensagem(String mensagen, String valor) {
+		return messageSource.getMessage(mensagen,valor == null ? null: new Object [] {valor}, LocaleContextHolder.getLocale());
+	}
 }
