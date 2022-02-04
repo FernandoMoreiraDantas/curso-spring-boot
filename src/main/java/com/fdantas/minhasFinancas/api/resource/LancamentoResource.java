@@ -23,8 +23,11 @@ import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
 import com.fdantas.minhasFinancas.service.LancamentoService;
 import com.fdantas.minhasFinancas.util.Mensagem;
 
+import lombok.extern.log4j.Log4j2;
+
 @RestController
 @RequestMapping("/api/lancamentos")
+@Log4j2
 public class LancamentoResource {
 	
 	@Autowired
@@ -66,6 +69,7 @@ public class LancamentoResource {
 	
 	@GetMapping
 	public List<Lancamento> listar(@RequestBody Lancamento lancamentoFiltro){
+		log.info("Iniciando a pesquisa de Lançamento com filtros:" + lancamentoFiltro.toString());
 		return lancamentoService.listar(lancamentoFiltro);
 	}
 	
