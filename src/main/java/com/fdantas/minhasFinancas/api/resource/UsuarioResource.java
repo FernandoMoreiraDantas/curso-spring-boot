@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fdantas.minhasFinancas.api.dto.UsuarioDTO;
 import com.fdantas.minhasFinancas.model.entity.Usuario;
 import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
+import com.fdantas.minhasFinancas.service.LancamentoService;
 import com.fdantas.minhasFinancas.service.UsuarioService;
 import com.fdantas.minhasFinancas.util.Mensagem;
 
@@ -28,6 +29,9 @@ public class UsuarioResource {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
 	
 	@Autowired
 	private Mensagem mensagem;
@@ -53,5 +57,10 @@ public class UsuarioResource {
 		Optional<Usuario> optionalUsuario = usuarioRepository.findById(codigo);
 		return optionalUsuario.isPresent() ? ResponseEntity.ok(optionalUsuario.get()):ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagem.getMensagem("usuario.nao-encontrado"));
 	}
-
+	
+	@GetMapping("{id}/saldo")
+	public ResponseEntity<?> obterSaldo(@PathVariable Long id){
+		Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
+		return optionalUsuario.isPresent() ? ResponseEntity.ok(lancamentoService.obterSaldoPorTipoLancamentoEUsuario(id)):ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagem.getMensagem("usuario.nao-encontrado"));
+	}
 }

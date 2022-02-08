@@ -1,5 +1,6 @@
 package com.fdantas.minhasFinancas.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fdantas.minhasFinancas.model.entity.Lancamento;
@@ -13,4 +14,5 @@ public interface LancamentoService {
 	List<Lancamento> listar(Lancamento lancamentoFiltro);
 	void atualizarStatus(Lancamento a, StatusLancamento status);
 	void validar(Lancamento lancamento);
+	BigDecimal obterSaldoPorTipoLancamentoEUsuario(Long id);
 }

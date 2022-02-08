@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fdantas.minhasFinancas.exception.RegraNegocioException;
 import com.fdantas.minhasFinancas.model.entity.Lancamento;
 import com.fdantas.minhasFinancas.model.enuns.StatusLancamento;
+import com.fdantas.minhasFinancas.model.enuns.TipoLancamento;
 import com.fdantas.minhasFinancas.model.repository.LancamentoRepository;
 import com.fdantas.minhasFinancas.service.LancamentoService;
 import com.fdantas.minhasFinancas.util.Mensagem;
@@ -61,6 +62,21 @@ public class LancamentoServiceImpl implements LancamentoService {
 		lancamento.setStatus(status);
 		this.atualizar(lancamento);
 	}
+	
+	@Override
+	public BigDecimal obterSaldoPorTipoLancamentoEUsuario(Long id) {
+		BigDecimal receitas = lancamentoRepository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.RECEITA);
+		BigDecimal despesas = lancamentoRepository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLancamento.DESPESA);
+		if(receitas == null) {
+			receitas = BigDecimal.ZERO;
+		}
+		if(despesas == null) {
+			despesas = BigDecimal.ZERO;
+		}
+		
+		return receitas.subtract(despesas);
+	}
+	
 
 	@Override
 	public void validar(Lancamento lancamento) {
@@ -76,7 +92,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			throw new RegraNegocioException(mensagem.getMensagem("lancamento.campo-obrigatorio","ano"));
 		}
 		
-		if(Objects.isNull(lancamento.getUsuario()) || Objects.isNull(lancamento.getId())){
+		if(Objects.isNull(lancamento.getUsuario()) || Objects.isNull(lancamento.getUsuario().getId())){
 			throw new RegraNegocioException(mensagem.getMensagem("lancamento.campo-obrigatorio","usuário"));
 			
 		}
@@ -90,5 +106,5 @@ public class LancamentoServiceImpl implements LancamentoService {
 		}
 		
 	}
-
+	
 }

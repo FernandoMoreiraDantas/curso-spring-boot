@@ -1,6 +1,7 @@
 package com.fdantas.minhasFinancas.api.resource;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fdantas.minhasFinancas.exception.RegraNegocioException;
 import com.fdantas.minhasFinancas.model.entity.Lancamento;
 import com.fdantas.minhasFinancas.model.entity.Usuario;
+import com.fdantas.minhasFinancas.model.enuns.StatusLancamento;
 import com.fdantas.minhasFinancas.model.repository.LancamentoRepository;
 import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
 import com.fdantas.minhasFinancas.service.LancamentoService;
@@ -53,7 +55,7 @@ public class LancamentoResource {
 	
 	@PutMapping("{id}")
 	public ResponseEntity<?> alterar(@PathVariable Long id, @RequestBody Lancamento lancamento){
-		Lancamento lancamentoSalvo = lancamentoRepository.findById(id).orElseThrow(() -> new RegraNegocioException("lancamento.nao-encontrado"));
+		Lancamento lancamentoSalvo = lancamentoRepository.findById(id).orElseThrow(() -> new RegraNegocioException(mensagem.getMensagem("lancamento.nao-encontrado")));
 		usuarioRepository.findById(lancamento.getUsuario().getId()).orElseThrow(() -> new RegraNegocioException(mensagem.getMensagem("usuario.nao-encontrado")));
 		BeanUtils.copyProperties(lancamento, lancamentoSalvo, "id");
 		return ResponseEntity.status(HttpStatus.OK).body(lancamentoService.salvar(lancamentoSalvo));
@@ -71,6 +73,19 @@ public class LancamentoResource {
 	public List<Lancamento> listar(@RequestBody Lancamento lancamentoFiltro){
 		log.info("Iniciando a pesquisa de Lançamento com filtros:" + lancamentoFiltro.toString());
 		return lancamentoService.listar(lancamentoFiltro);
+	}
+	
+	@PutMapping("{id}/atualizar-status")
+	public ResponseEntity<Lancamento> atualizarStatus(@PathVariable("id") Long id, @RequestBody Lancamento lancamento){
+		Lancamento lancamentoSalvo = lancamentoRepository.findById(id).orElseThrow(() -> new RegraNegocioException((mensagem.getMensagem("lancamento.nao-encontrado"))));
+		StatusLancamento statusLancamento = StatusLancamento.valueOf(lancamento.getStatus().toString());
+		if(Objects.nonNull(statusLancamento)) {
+			lancamentoSalvo.setStatus(statusLancamento);
+			lancamentoService.atualizar(lancamentoSalvo);
+		}else {
+			throw new RegraNegocioException(mensagem.getMensagem("lancamento.status-invalido"));
+		} 
+		return ResponseEntity.status(HttpStatus.OK).body(lancamentoService.atualizar(lancamentoSalvo));
 	}
 	
 }
