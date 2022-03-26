@@ -2,6 +2,7 @@ package com.fdantas.minhasFinancas.api.resource;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fdantas.minhasFinancas.exception.RegraNegocioException;
@@ -70,11 +72,26 @@ public class LancamentoResource {
 	
 	
 	@GetMapping
-	public List<Lancamento> listar(@RequestBody Lancamento lancamentoFiltro){
-		log.info("Iniciando a pesquisa de Lançamento com filtros:" + lancamentoFiltro.toString());
-		return lancamentoService.listar(lancamentoFiltro);
+	public ResponseEntity<?> buscar(@RequestParam(value = "descricao", required = false) String descricao,
+			@RequestParam(value = "mes", required = false) Integer mes,
+			@RequestParam(value = "ano", required = false) Integer ano,
+			@RequestParam(value = "usuario", required = false) Long idUsuario) {
+
+		List<Lancamento> listaLancamentos = null;
+
+		Optional<Usuario> optionalUsuario = usuarioRepository.findById(idUsuario);
+		if (optionalUsuario.isPresent()) {
+			Lancamento lancamentoFiltro = Lancamento.builder().descricao(descricao).mes(mes).ano(ano)
+					.usuario(optionalUsuario.get()).build();
+			listaLancamentos = lancamentoService.listar(lancamentoFiltro);
+
+		} else {
+			ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagem.getMensagem("usuario.nao-encontrado"));
+		}
+
+		return ResponseEntity.ok(listaLancamentos);
 	}
-	
+
 	@PutMapping("{id}/atualizar-status")
 	public ResponseEntity<Lancamento> atualizarStatus(@PathVariable("id") Long id, @RequestBody Lancamento lancamento){
 		Lancamento lancamentoSalvo = lancamentoRepository.findById(id).orElseThrow(() -> new RegraNegocioException((mensagem.getMensagem("lancamento.nao-encontrado"))));
