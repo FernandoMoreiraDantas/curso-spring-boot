@@ -22,6 +22,7 @@ import com.fdantas.minhasFinancas.exception.RegraNegocioException;
 import com.fdantas.minhasFinancas.model.entity.Lancamento;
 import com.fdantas.minhasFinancas.model.entity.Usuario;
 import com.fdantas.minhasFinancas.model.enuns.StatusLancamento;
+import com.fdantas.minhasFinancas.model.enuns.TipoLancamento;
 import com.fdantas.minhasFinancas.model.repository.LancamentoRepository;
 import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
 import com.fdantas.minhasFinancas.service.LancamentoService;
@@ -70,20 +71,30 @@ public class LancamentoResource {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@GetMapping("{id}")
+	public ResponseEntity<?> obterLancamento( @PathVariable("id") Long id){
+		Optional<Lancamento> optionalLancamento = lancamentoRepository.findById(id);
+		return optionalLancamento.isPresent() ? ResponseEntity.ok(optionalLancamento.get()):ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagem.getMensagem("lancamento.nao-encontrado"));
+		
+	}
+	
 	
 	@GetMapping
 	public ResponseEntity<?> buscar(@RequestParam(value = "descricao", required = false) String descricao,
 			@RequestParam(value = "mes", required = false) Integer mes,
 			@RequestParam(value = "ano", required = false) Integer ano,
+			@RequestParam(value = "tipo", required = false) TipoLancamento tipo,
 			@RequestParam(value = "usuario", required = false) Long idUsuario) {
 
 		List<Lancamento> listaLancamentos = null;
 
 		Optional<Usuario> optionalUsuario = usuarioRepository.findById(idUsuario);
 		if (optionalUsuario.isPresent()) {
-			Lancamento lancamentoFiltro = Lancamento.builder().descricao(descricao).mes(mes).ano(ano)
+			Lancamento lancamentoFiltro = Lancamento.builder().descricao(descricao).mes(mes).ano(ano).tipo(tipo)
 					.usuario(optionalUsuario.get()).build();
 			listaLancamentos = lancamentoService.listar(lancamentoFiltro);
+			
+			log.info("Inicinado a pesquisa com filtros:" + lancamentoFiltro.toString());
 
 		} else {
 			ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagem.getMensagem("usuario.nao-encontrado"));

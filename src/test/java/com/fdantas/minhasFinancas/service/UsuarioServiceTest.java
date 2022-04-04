@@ -19,6 +19,7 @@ import com.fdantas.minhasFinancas.exception.RegraNegocioException;
 import com.fdantas.minhasFinancas.model.entity.Usuario;
 import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
 import com.fdantas.minhasFinancas.service.impl.UsuarioServiceImpl;
+import com.fdantas.minhasFinancas.util.Mensagem;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -29,6 +30,11 @@ public class UsuarioServiceTest {
 
 	@MockBean
 	private UsuarioRepository usuarioRepository;
+	
+	@MockBean
+	private Mensagem mensagem;
+	
+	
 
 	@Test
 	public void deveSalvarUmUsuario() {
@@ -84,6 +90,7 @@ public class UsuarioServiceTest {
 	public void deveLancarErroQuandoNaoEncontrouUsuario() {
 		// cenario
 		Mockito.when(usuarioRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+		Mockito.when(mensagem.getMensagem(Mockito.anyString())).thenReturn("Usuário não encontrado para o e-mail informado.");
 		// ação
 		Throwable exception = Assertions.catchThrowable(() -> usuarioService.autenticar("email@email.com", "senha"));
 
@@ -98,7 +105,7 @@ public class UsuarioServiceTest {
 		String senha = "senha";
 		Usuario usuario = Usuario.builder().email("email@email.com").senha(senha).build();
 		Mockito.when(usuarioRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(usuario));
-
+		Mockito.when(mensagem.getMensagem(Mockito.anyString())).thenReturn("Senha Inválida.");
 		// ação
 		Throwable exception = Assertions.catchThrowable(() -> usuarioService.autenticar("email@email.com", "123"));
 
