@@ -1,7 +1,5 @@
 package com.fdantas.minhasFinancas.service.impl;
 
-import java.util.Optional;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +30,17 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	@Override
 	public Usuario autenticar(String email, String senha) {
-		Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+		Usuario usuario = usuarioRepository.findByEmail(email);
 		
-		if(usuario.isEmpty()) {
+		if(usuario == null) {
 			throw new ErroAutenticacaoException(mensagem.getMensagem("usuario.nao-encontrado"));
 		}
 		
-		if(!usuario.get().getSenha().equals(senha)) {
+		if(!usuario.getSenha().equals(senha)) {
 			throw new ErroAutenticacaoException(mensagem.getMensagem("usuario.senha-invalida"));
 		}
 		
-		return usuario.get();
+		return usuario;
 	}
 
 	@Override

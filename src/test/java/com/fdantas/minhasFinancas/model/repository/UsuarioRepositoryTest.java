@@ -1,7 +1,5 @@
 package com.fdantas.minhasFinancas.model.repository;
 
-import java.util.Optional;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,19 +62,19 @@ public class UsuarioRepositoryTest {
 		Usuario usuario = criarUsuario();
 		entityManager.persist(usuario);
 		//ação
-		Optional<Usuario> result = usuarioRepository.findByEmail("usuario@email.com");
+		Usuario result = usuarioRepository.findByEmail("usuario@email.com");
 		
 		// verificação
-		Assertions.assertThat(result.isPresent()).isTrue();
+		Assertions.assertThat(result != null).isTrue();
 	}
 	
 	
 	@Test
 	public void deveRetornarVazioQuandoUsuarioNaoExistrePorEmail() {
 		//ação
-		Optional<Usuario> result = usuarioRepository.findByEmail("usuario@email.com");
+		Usuario result = usuarioRepository.findByEmail("usuario@email.com");
 		// verificação
-		Assertions.assertThat(result.isPresent()).isFalse();
+		Assertions.assertThat(result != null).isFalse();
 	}
 	
 	

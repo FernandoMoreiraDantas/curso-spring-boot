@@ -81,7 +81,7 @@ public class UsuarioServiceTest {
 		String senha = "senha";
 
 		Usuario usuario = Usuario.builder().email(email).senha(senha).id(1l).build();
-		Mockito.when(usuarioRepository.findByEmail(email)).thenReturn(Optional.of(usuario));
+		Mockito.when(usuarioRepository.findByEmail(email)).thenReturn((usuario));
 		// ação/verificação
 		assertDoesNotThrow(() -> usuarioService.autenticar(email, senha));
 	}
@@ -89,7 +89,7 @@ public class UsuarioServiceTest {
 	@Test
 	public void deveLancarErroQuandoNaoEncontrouUsuario() {
 		// cenario
-		Mockito.when(usuarioRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+		Mockito.when(usuarioRepository.findByEmail(Mockito.anyString())).thenReturn(null);
 		Mockito.when(mensagem.getMensagem(Mockito.anyString())).thenReturn("Usuário não encontrado para o e-mail informado.");
 		// ação
 		Throwable exception = Assertions.catchThrowable(() -> usuarioService.autenticar("email@email.com", "senha"));
@@ -104,7 +104,7 @@ public class UsuarioServiceTest {
 		// cenario
 		String senha = "senha";
 		Usuario usuario = Usuario.builder().email("email@email.com").senha(senha).build();
-		Mockito.when(usuarioRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(usuario));
+		Mockito.when(usuarioRepository.findByEmail(Mockito.anyString())).thenReturn((usuario));
 		Mockito.when(mensagem.getMensagem(Mockito.anyString())).thenReturn("Senha Inválida.");
 		// ação
 		Throwable exception = Assertions.catchThrowable(() -> usuarioService.autenticar("email@email.com", "123"));
