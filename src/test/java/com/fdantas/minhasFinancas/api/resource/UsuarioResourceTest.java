@@ -23,7 +23,6 @@ import com.fdantas.minhasFinancas.model.entity.Usuario;
 import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
 import com.fdantas.minhasFinancas.service.LancamentoService;
 import com.fdantas.minhasFinancas.service.UsuarioService;
-import com.fdantas.minhasFinancas.util.Mensagem;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -43,9 +42,6 @@ public class UsuarioResourceTest {
 	
 	@MockBean
 	LancamentoService lancamentoService;
-	
-	@MockBean
-	Mensagem mensagem;
 	
 	@Test
 	public void deveAutenticarUsuario() throws Exception {

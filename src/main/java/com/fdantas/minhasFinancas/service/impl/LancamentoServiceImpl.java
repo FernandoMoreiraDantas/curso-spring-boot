@@ -18,7 +18,6 @@ import com.fdantas.minhasFinancas.model.enuns.StatusLancamento;
 import com.fdantas.minhasFinancas.model.enuns.TipoLancamento;
 import com.fdantas.minhasFinancas.model.repository.LancamentoRepository;
 import com.fdantas.minhasFinancas.service.LancamentoService;
-import com.fdantas.minhasFinancas.util.Mensagem;
 
 @Service
 public class LancamentoServiceImpl implements LancamentoService {
@@ -26,8 +25,6 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
 	
-	@Autowired
-	private Mensagem mensagem;
 
 	@Override
 	@Transactional
@@ -81,28 +78,28 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Override
 	public void validar(Lancamento lancamento) {
 		if(StringUtils.isNullOrEmpty(lancamento.getDescricao())){
-			throw new RegraNegocioException(mensagem.getMensagem("lancamento.campo-obrigatoria","descrição"));
+			throw new RegraNegocioException("Informe a Descrição");
 		}
 		
 		if(Objects.isNull(lancamento.getMes()) || lancamento.getMes() < 1 || lancamento.getMes() > 12) {
-			throw new RegraNegocioException(mensagem.getMensagem("lancamento.campo-obrigatorio","mês"));
+			throw new RegraNegocioException("Informe um Mês válido");
 		}
 		
 		if(Objects.isNull(lancamento.getAno()) || lancamento.getAno().toString().length() != 4) {
-			throw new RegraNegocioException(mensagem.getMensagem("lancamento.campo-obrigatorio","ano"));
+			throw new RegraNegocioException("Informe um ano válido.");
 		}
 		
 		if(Objects.isNull(lancamento.getUsuario()) || Objects.isNull(lancamento.getUsuario().getId())){
-			throw new RegraNegocioException(mensagem.getMensagem("lancamento.campo-obrigatorio","usuário"));
+			throw new RegraNegocioException("Informe o usuario");
 			
 		}
 		
 		if(Objects.isNull(lancamento.getValor()) || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1) {
-			throw new RegraNegocioException(mensagem.getMensagem("lancamento.campo-obrigatorio","valor"));
+			throw new RegraNegocioException("Informe um valor.");
 		}
 		
 		if(Objects.isNull(lancamento.getTipo())) {
-			throw new RegraNegocioException(mensagem.getMensagem("lancamento.campo-obrigatorio","tipo"));
+			throw new RegraNegocioException("Informe o Tipo.");
 		}
 		
 	}

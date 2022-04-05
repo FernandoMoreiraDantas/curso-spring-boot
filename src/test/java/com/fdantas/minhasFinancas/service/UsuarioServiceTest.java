@@ -3,8 +3,6 @@ package com.fdantas.minhasFinancas.service;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Optional;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +17,6 @@ import com.fdantas.minhasFinancas.exception.RegraNegocioException;
 import com.fdantas.minhasFinancas.model.entity.Usuario;
 import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
 import com.fdantas.minhasFinancas.service.impl.UsuarioServiceImpl;
-import com.fdantas.minhasFinancas.util.Mensagem;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -30,10 +27,6 @@ public class UsuarioServiceTest {
 
 	@MockBean
 	private UsuarioRepository usuarioRepository;
-	
-	@MockBean
-	private Mensagem mensagem;
-	
 	
 
 	@Test
@@ -90,7 +83,6 @@ public class UsuarioServiceTest {
 	public void deveLancarErroQuandoNaoEncontrouUsuario() {
 		// cenario
 		Mockito.when(usuarioRepository.findByEmail(Mockito.anyString())).thenReturn(null);
-		Mockito.when(mensagem.getMensagem(Mockito.anyString())).thenReturn("Usuário não encontrado para o e-mail informado.");
 		// ação
 		Throwable exception = Assertions.catchThrowable(() -> usuarioService.autenticar("email@email.com", "senha"));
 
@@ -105,7 +97,6 @@ public class UsuarioServiceTest {
 		String senha = "senha";
 		Usuario usuario = Usuario.builder().email("email@email.com").senha(senha).build();
 		Mockito.when(usuarioRepository.findByEmail(Mockito.anyString())).thenReturn((usuario));
-		Mockito.when(mensagem.getMensagem(Mockito.anyString())).thenReturn("Senha Inválida.");
 		// ação
 		Throwable exception = Assertions.catchThrowable(() -> usuarioService.autenticar("email@email.com", "123"));
 

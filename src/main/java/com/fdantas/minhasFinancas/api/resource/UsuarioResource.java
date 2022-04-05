@@ -18,7 +18,6 @@ import com.fdantas.minhasFinancas.model.entity.Usuario;
 import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
 import com.fdantas.minhasFinancas.service.LancamentoService;
 import com.fdantas.minhasFinancas.service.UsuarioService;
-import com.fdantas.minhasFinancas.util.Mensagem;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -33,8 +32,6 @@ public class UsuarioResource {
 	@Autowired
 	private LancamentoService lancamentoService;
 	
-	@Autowired
-	private Mensagem mensagem;
 
 	@PostMapping("/autenticar")
 	public ResponseEntity<?> autenticar(@RequestBody UsuarioDTO usuarioDTO) {
@@ -55,12 +52,12 @@ public class UsuarioResource {
 	@GetMapping("/{codigo}")
 	public ResponseEntity<?> consultar(@PathVariable Long codigo ){
 		Optional<Usuario> optionalUsuario = usuarioRepository.findById(codigo);
-		return optionalUsuario.isPresent() ? ResponseEntity.ok(optionalUsuario.get()):ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagem.getMensagem("usuario.nao-encontrado"));
+		return optionalUsuario.isPresent() ? ResponseEntity.ok(optionalUsuario.get()):ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario não encontrado");
 	}
 	
 	@GetMapping("{id}/saldo")
 	public ResponseEntity<?> obterSaldo(@PathVariable Long id){
 		Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
-		return optionalUsuario.isPresent() ? ResponseEntity.ok(lancamentoService.obterSaldoPorTipoLancamentoEUsuario(id)):ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagem.getMensagem("usuario.nao-encontrado"));
+		return optionalUsuario.isPresent() ? ResponseEntity.ok(lancamentoService.obterSaldoPorTipoLancamentoEUsuario(id)):ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuario não encontrado");
 	}
 }
