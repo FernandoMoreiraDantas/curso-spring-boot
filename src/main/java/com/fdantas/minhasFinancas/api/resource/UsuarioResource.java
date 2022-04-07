@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fdantas.minhasFinancas.api.dto.TokenDTO;
 import com.fdantas.minhasFinancas.api.dto.UsuarioDTO;
 import com.fdantas.minhasFinancas.model.entity.Usuario;
 import com.fdantas.minhasFinancas.model.repository.UsuarioRepository;
+import com.fdantas.minhasFinancas.service.JwtService;
 import com.fdantas.minhasFinancas.service.LancamentoService;
 import com.fdantas.minhasFinancas.service.UsuarioService;
 
@@ -32,10 +34,16 @@ public class UsuarioResource {
 	@Autowired
 	private LancamentoService lancamentoService;
 	
+	@Autowired
+	private JwtService jwtService;
+	
 
 	@PostMapping("/autenticar")
 	public ResponseEntity<?> autenticar(@RequestBody UsuarioDTO usuarioDTO) {
-		return ResponseEntity.ok(usuarioService.autenticar(usuarioDTO.getEmail(), usuarioDTO.getSenha()));
+		Usuario usuarioAutenticado = usuarioService.autenticar(usuarioDTO.getEmail(), usuarioDTO.getSenha());
+		String token = jwtService.gerarToken(usuarioAutenticado);
+		TokenDTO tokenDTO = new TokenDTO(usuarioAutenticado.getNome(), token);
+		return ResponseEntity.ok(tokenDTO);
 	}
 
 	@PostMapping
