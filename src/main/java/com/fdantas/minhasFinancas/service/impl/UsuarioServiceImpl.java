@@ -3,6 +3,7 @@ package com.fdantas.minhasFinancas.service.impl;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fdantas.minhasFinancas.exception.ErroAutenticacaoException;
@@ -16,12 +17,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	private PasswordEncoder encoder;
 	
 	
 	
-	public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
+	public UsuarioServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder encoder) {
 		super();
 		this.usuarioRepository = usuarioRepository;
+		this.encoder = encoder;
 	} 
 
 	@Override
@@ -32,7 +35,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 			throw new ErroAutenticacaoException("Usuário não encontrado para o e-mail informado.");
 		}
 		
-		if(!usuario.getSenha().equals(senha)) {
+		if(!encoder.matches(senha, usuario.getSenha())) {
 			throw new ErroAutenticacaoException("Senha Inválida.");
 		}
 		
@@ -43,6 +46,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Transactional
 	public Usuario salvarUsuario(Usuario usuario) {
 		validarEmail(usuario.getEmail());
+		usuario.setSenha(encoder.encode(usuario.getSenha()));
 		return usuarioRepository.save(usuario);
 	}
 
