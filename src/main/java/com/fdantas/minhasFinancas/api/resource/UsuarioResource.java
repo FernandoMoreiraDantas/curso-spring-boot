@@ -42,7 +42,7 @@ public class UsuarioResource {
 	public ResponseEntity<?> autenticar(@RequestBody UsuarioDTO usuarioDTO) {
 		Usuario usuarioAutenticado = usuarioService.autenticar(usuarioDTO.getEmail(), usuarioDTO.getSenha());
 		String token = jwtService.gerarToken(usuarioAutenticado);
-		TokenDTO tokenDTO = new TokenDTO(usuarioAutenticado.getNome(), token);
+		TokenDTO tokenDTO = new TokenDTO(usuarioAutenticado.getNome(), token,usuarioAutenticado.getId());
 		return ResponseEntity.ok(tokenDTO);
 	}
 

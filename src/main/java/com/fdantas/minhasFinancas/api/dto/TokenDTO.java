@@ -10,4 +10,5 @@ import lombok.Setter;
 public class TokenDTO {
 	private String nome;
 	private String token;
+	private Long id;
 }
